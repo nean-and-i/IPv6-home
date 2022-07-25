@@ -207,6 +207,8 @@ IPv6 -> ND -> `<device>` -> [x] Managed Adress Information
 
 DS-Lite is a method to provide IPv4 connectivity via a IPv6 uplink - a IPv6 point-to-point tunnel to AFTR (Address Family Transition Router) where the local IPv4 traffic is routed to ISP central CGNAT to be nat'ed into public IPv4.
 
+![AFTR](AFTR-dslite.drawio.png)
+
 
 ## #Magenta #DS-Lite-FQDN
 
