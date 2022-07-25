@@ -6,6 +6,11 @@
 - [Scope](#scope)
 - [#IPv6 #Mikrotik](#ipv6-mikrotik)
   - [IPv6 DHCPv6 Client Mikrotik](#ipv6-dhcpv6-client-mikrotik)
+- [#IPv6 #Mikrotik upstream #DNSv6](#ipv6-mikrotik-upstream-dnsv6)
+- [IPv6 DNSv6](#ipv6-dnsv6)
+    - [#Magenta-DNSv6](#magenta-dnsv6)
+    - [#Google-DNSv6](#google-dnsv6)
+    - [#AdGuard-DNSv6](#adguard-dnsv6)
 - [#IPv6 #Mikrotik SOL/RA](#ipv6-mikrotik-solra)
   - [Stateless RA + RADVD/RDNSS -> works](#stateless-ra--radvdrdnss---works)
   - [RA + RADVD -> better fit to assign local DNSv6 ULA address](#ra--radvd---better-fit-to-assign-local-dnsv6-ula-address)
@@ -17,10 +22,6 @@
 - [IPv6 DS-Lite / AFTR](#ipv6-ds-lite--aftr)
   - [#Magenta #DS-Lite-FQDN](#magenta-ds-lite-fqdn)
   - [#Magenta #DS-Lite-address](#magenta-ds-lite-address)
-- [IPv6 DNSv6](#ipv6-dnsv6)
-    - [#Magenta-DNSv6](#magenta-dnsv6)
-    - [#Google-DNSv6](#google-dnsv6)
-    - [#AdGuard-DNSv6](#adguard-dnsv6)
 - [#IPv6 #ULA ( Unique Local Address ) Generation -> #RFC4193](#ipv6-ula--unique-local-address--generation---rfc4193)
   - [ULA / RFC4193 generators](#ula--rfc4193-generators)
   - [ULA Network EXAMPLE](#ula-network-example)
@@ -102,6 +103,68 @@ Pool Prefix Length: 64
 [ ] Rapid Commit
 [x] Add Default Route
 ```
+
+# #IPv6 #Mikrotik upstream #DNSv6
+
+In order to achieve lowest possible latency for DNS queries, it is recomended to use DNSv6 instead of DNSv4 that goes via AFTR and CGNAT that adds almost 3 times latency!
+
+In a normal ISP provided product this magic is done on the modem itself, so the modem should do upstream DNSv6 queries even for IPv4 only clients.
+
+Flow: Client -> DNSv4 -> Modem(192.168.0.1) -> DNSv6 -> ISP-DNSv6-Server
+
+So the worst one can do, is to set a IPv4 DNSv4 server like 8.8.8.8, then every query will go via AFTR and the queries will take up to 3 times longer, not fair to blame the ISP.
+
+Below a real world statistics of measurements for DNSv4 queries via AFTR vs. direct DNSv6 upstrem from a mikrotik router.
+
+The ISP DNSv4 (UPC1/UPC2) via AFTR is slow, even if its in the same datacenter as the cable modem termination system, and as a suprise Google DNSv4 is slow as hell.
+
+Overall recommendation is to use your ISP DNS servers, they're faster by design (should be), also ISP's are not interested in DNS queries which is better for privacy. In the end its a matter of trust, who should be able to see personal data (DNS queries), a service provider that buinissmodel is all about data collecting-processing-selling or an ISP which businessmodel is internet access.
+Also one should care about the hype around DoH, it adds an enormous amount of overhead and latency and in the end (after encryption) a DNS resolver does see the real queries!
+
+
+![DNS latency comparison](DNS-latency-time-comparison.png)
+
+For DNSv6 upstream IPv6 connectivity should be in place -> mikrotik must have a public IPv6 address assigned -> IPv6 DHCPv6 Client enabled and working
+
+
+IP -> DNS 
+
+```
+Servers:
+2a02:8383:d:c::1
+2a02:8383:d:c::1000
+```
+
+Add IPv6 addresses only, the mikrotik will use DNSv6 for upstream (the router has no other choice)
+
+Ensure the clients are getting the router IPv4 Adress as DNSv4 server via DHCPv4.
+
+
+
+# IPv6 DNSv6
+
+### #Magenta-DNSv6
+
+```
+2a02:8383:d:c::1
+2a02:8383:d:c::1000
+```
+
+### #Google-DNSv6
+
+```
+2001:4860:4860::8888
+2001:4860:4860::8844
+```
+
+### #AdGuard-DNSv6
+
+```
+2a00:5a60::ad1:0ff
+2a00:5a60::ad2:0ff
+```
+
+
 
 # #IPv6 #Mikrotik SOL/RA
 
@@ -223,28 +286,6 @@ aftr02.net.magenta.at
 ```
 
 
-# IPv6 DNSv6
-
-### #Magenta-DNSv6
-
-```
-2a02:8383:d:c::1
-2a02:8383:d:c::1000
-```
-
-### #Google-DNSv6
-
-```
-2001:4860:4860::8888
-2001:4860:4860::8844
-```
-
-### #AdGuard-DNSv6
-
-```
-2a00:5a60::ad1:0ff
-2a00:5a60::ad2:0ff
-```
 
 
 # #IPv6 #ULA ( Unique Local Address ) Generation -> #RFC4193
