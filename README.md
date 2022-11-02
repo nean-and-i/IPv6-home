@@ -82,6 +82,10 @@ IPv6 home network best practice
 ```
 
 
+
+![Mikrotik Setup](mikrotik-setup.drawio.png)
+
+
 # #IPv6 #Mikrotik
 
 
@@ -446,4 +450,6 @@ Network			- fd9f:9999:48f6:0002:0000:0000:0000:0000 -
 			  fd9f:9999:48f6:0002:ffff:ffff:ffff:ffff
 Network			- fd9f:9999:48f6:0003:0000:0000:0000:0000 -
 ```
+
+
 
